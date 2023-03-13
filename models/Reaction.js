@@ -1,13 +1,13 @@
-// SCHEMA ONLY. Subcodument in Thought model.
+// SCHEMA ONLY. Subdocument in Thought model.
 
-const { Schema, model } = require("mongoose");
+const { Schema, Types } = require('mongoose');
 
 const reactionSchema = new Schema(
   {
     // reactionId: uses Mongoose's ObjectId datatype, default set to a new ObjectId
     reactionId: {
       type: Schema.Types.ObjectId,
-      default: new ObjectId(),
+      default: () => new Types.ObjectId(),
     },
 
     // reactionBody: string, required, 280 character max
@@ -27,13 +27,12 @@ const reactionSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-    },
-
-    methods: {
-      // getter method to format timestamp on query
-      // unclear on how this is to be formatted. Should revisit.
-      getTimestamp() {
-        return this.createdAt;
+      methods: {
+        // getter method to format timestamp on query
+        // unclear on how this is to be formatted. Should revisit.
+        getTimestamp() {
+          return this.createdAt;
+        },
       },
     },
   },
@@ -50,6 +49,4 @@ reactionSchema.virtual("reactionCount").get(function () {
   return this.reactions.length;
 });
 
-const Reaction = model("reaction", reactionSchema);
-
-module.exports = Reaction;
+module.exports = reactionSchema;

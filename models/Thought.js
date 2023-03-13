@@ -15,6 +15,13 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      methods: {
+        // getter method to format timestamp on query
+        // unclear on how this is to be formatted. Should revisit.
+        getTimestamp() {
+          return this.createdAt;
+        },
+      },
     },
 
     // username: string, required. Is the user that created this thought.
@@ -25,14 +32,6 @@ const thoughtSchema = new Schema(
 
     // reactions (replies): array of nested documents created w/ reactionSchema
     reactions: [reactionSchema],
-
-    methods: {
-      // getter method to format timestamp on query
-      // unclear on how this is to be formatted. Should revisit.
-      getTimestamp() {
-        return this.createdAt;
-      },
-    },
   },
   {
     toJSON: {
