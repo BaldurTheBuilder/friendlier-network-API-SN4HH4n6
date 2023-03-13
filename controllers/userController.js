@@ -9,7 +9,7 @@ module.exports = {
   },
 
   // get on single user by _id.
-    // populated w/ thought and friend data
+  // populated w/ thought and friend data
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.user_id })
       .select("-__v")
@@ -18,20 +18,28 @@ module.exports = {
           ? res.status(404).json({ message: "No user with the entered ID." })
           : res.json(user)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json(err);
+      });
   },
 
   // post on new user
-//   createUser
+//   example:
+//     {
+//       "username": "lernantino",
+//       "email": "lernantino@gmail.com"
+//     }
+  createUser(req, res) {
+    User.create(req.body)
+      .then((user) => res.json(user))
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json(err);
+      });
+  },
 };
 
-
-
-// example:
-//   {
-//     "username": "lernantino",
-//     "email": "lernantino@gmail.com"
-//   }
 // put to update user by _id
 // delete to remove user by _id
 // bonus: remove associated thoughts when deleted

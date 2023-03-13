@@ -8,8 +8,8 @@ const {
 } = require('../../controllers/userController');
 
 // /api/users
-router.route('/').get(getUsers);
-// router.route('/').get(getUsers).post(createUser);
+// router.route('/').get(getUsers);
+router.route('/').get(getUsers).post(createUser);
 
 // /api/users/:user_id
 router.route('/:user_id').get(getSingleUser);
