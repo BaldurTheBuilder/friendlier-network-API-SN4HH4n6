@@ -9,9 +9,10 @@ module.exports = {
   },
 
   // get on single user by _id.
-  // populated w/ thought and friend data
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.user_id })
+      .populate({path: 'friends', select: '-__v'})
+      .populate({path: 'thoughts', select: '-__v'})
       .select("-__v")
       .then((user) =>
         !user
@@ -25,11 +26,11 @@ module.exports = {
   },
 
   // post on new user
-//   example:
-//     {
-//       "username": "lernantino",
-//       "email": "lernantino@gmail.com"
-//     }
+  //   example:
+  //     {
+  //       "username": "lernantino",
+  //       "email": "lernantino@gmail.com"
+  //     }
   createUser(req, res) {
     User.create(req.body)
       .then((user) => res.json(user))
