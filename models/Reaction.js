@@ -1,14 +1,55 @@
-// SCHEMA ONLY
+// SCHEMA ONLY. Subcodument in Thought model.
 
-// reactionId: uses Mongoose's ObjectId datatype, default set to a new ObjectId
+const { Schema, model } = require("mongoose");
 
-// reactionBody: string, required, 280 character max
+const reactionSchema = new Schema(
+  {
+    // reactionId: uses Mongoose's ObjectId datatype, default set to a new ObjectId
+    reactionId: {
+      type: Schema.Types.ObjectId,
+      default: new ObjectId(),
+    },
 
-// username: string, required
+    // reactionBody: string, required, 280 character max
+    reactionBody: {
+      type: String,
+      required: true,
+      maxLength: 280,
+    },
 
-// createdAt: date, defaults to current timestamp, uses getter method to format timestamp on query
+    // username: string, required
+    username: {
+      type: String,
+      required: true,
+    },
 
+    // createdAt: date, defaults to current timestamp, uses getter method to format timestamp on query
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
 
+    methods: {
+      // getter method to format timestamp on query
+      // unclear on how this is to be formatted. Should revisit.
+      getTimestamp() {
+        return this.createdAt;
+      },
+    },
+  },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    id: false,
+  }
+);
 
-// schema settings
-    // subdoc schema in the Thought model
+// reactionCount: virtual that retrieves lenght of thought's reacitons array field on query.
+reactionSchema.virtual("reactionCount").get(function () {
+  return this.reactions.length;
+});
+
+const Reaction = model("reaction", reactionSchema);
+
+module.exports = Reaction;
