@@ -22,18 +22,30 @@ const userSchema = new Schema(
             }
         },
 
-        thoughts: [thoughtSchema],
+        // thoughts: array of _id values referencing Thought model
+        thoughts: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Thought',
+            },
+        ],
 
-        friends: [userSchema]
+        // friends: array of _id values referencing User model (self-reference)
+        friends: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+            },
+        ]
 
-    }
+    },
+    {
+        toJSON: {
+          virtuals: true,
+        },
+        id: false,
+      }
 );
-
-// thoughts: array of _id values referencing Thought model
-
-// friends: array of _id values referencing User model (self-reference)
-
-
 
 // friendCount: virtual in schema settings. Retrieves length of user's friends array field when queried.
 
