@@ -41,6 +41,7 @@ module.exports = {
   },
 
   // delete to remove user by _id
+  // bonus: remove associated thoughts when deleted
   deleteUser(req, res) {
     User.findOneAndRemove({ _id: req.params.user_id })
       .then((user) =>
@@ -48,14 +49,29 @@ module.exports = {
           ? res.status(404).json({ message: "No user with that ID." })
           : Thought.deleteMany({ _id: { $in: user.thoughts } })
       )
-      .then(res.json({ message: "User and associated thoughts successfully deleted." }))
+      .then(
+        res.json({
+          message: "User and associated thoughts successfully deleted.",
+        })
+      )
       .catch((err) => {
         console.log(err);
         res.status(500).json(err);
       });
   },
+
+  // put to update user by _id
+  updateUser(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.user_id },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    )
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: "no users with that ID." })
+          : res.json(user)
+      )
+      .catch((err) => res.status(500).json(err));
+  },
 };
-
-// put to update user by _id
-
-// bonus: remove associated thoughts when deleted
