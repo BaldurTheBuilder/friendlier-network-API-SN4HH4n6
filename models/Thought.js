@@ -1,11 +1,52 @@
-// thoughtText: string, required, must be between 1-280 characters.
+const { Schema, model } = require("mongoose");
+const reactionSchema = require("./Reaction");
 
-// createdAt: date, defaults to current timestamp, getter method to format timestamp on query
+const thoughtSchema = new Schema(
+  {
+    // thoughtText: string, required, must be between 1-280 characters.
+    thoughtText: {
+      type: String,
+      required: true,
+      minLength: 1,
+      maxLength: 280,
+    },
 
-// username: string, required. Is the user that created this thought.
+    // createdAt: date, defaults to current timestamp
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
 
-// reactions (replies): array of nested documents created w/ reactionSchema
+    // username: string, required. Is the user that created this thought.
+    username: {
+      type: String,
+      required: true,
+    },
 
+    // reactions (replies): array of nested documents created w/ reactionSchema
+    reactions: [reactionSchema],
 
+    methods: {
+      // getter method to format timestamp on query
+      // unclear on how this is to be formatted. Should revisit.
+      getTimestamp() {
+        return this.createdAt;
+      },
+    },
+  },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    id: false,
+  }
+);
 
 // reactionCount: virtual that retrieves lenght of thought's reacitons array field on query.
+thoughtSchema.virtual("reactionCount").get(function () {
+  return this.reactions.length;
+});
+
+const Thought = model("thought", thoughtSchema);
+
+module.exports = Thought;
