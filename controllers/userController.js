@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Thought } = require("../models");
 
 module.exports = {
   // get on all users
@@ -11,8 +11,8 @@ module.exports = {
   // get on single user by _id.
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.user_id })
-      .populate({path: 'friends', select: '-__v'})
-      .populate({path: 'thoughts', select: '-__v'})
+      .populate({ path: "friends", select: "-__v" })
+      .populate({ path: "thoughts", select: "-__v" })
       .select("-__v")
       .then((user) =>
         !user
@@ -39,8 +39,23 @@ module.exports = {
         return res.status(500).json(err);
       });
   },
+
+  // delete to remove user by _id
+  deleteUser(req, res) {
+    User.findOneAndRemove({ _id: req.params.user_id })
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: "No user with that ID." })
+          : Thought.deleteMany({ _id: { $in: user.thoughts } })
+      )
+      .then(res.json({ message: "User and associated thoughts successfully deleted." }))
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  },
 };
 
 // put to update user by _id
-// delete to remove user by _id
+
 // bonus: remove associated thoughts when deleted
